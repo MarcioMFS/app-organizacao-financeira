@@ -1,6 +1,6 @@
 import { useAuthStore } from '../store/authStore'
 import { useSettingsStore } from '../store/settingsStore'
-import { User, Moon, Sun, Eye, EyeOff, Bell, Lock } from 'lucide-react'
+import { User, Moon, Sun, Eye, EyeOff, Bell } from 'lucide-react'
 
 export default function Settings() {
   const { user, couple } = useAuthStore()
