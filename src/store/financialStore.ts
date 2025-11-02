@@ -190,6 +190,11 @@ export const useFinancialStore = create<FinancialState>()((set, get) => ({
       if (expense.owner !== undefined) updates.owner = expense.owner
       if (expense.dueDay !== undefined) updates.due_day = expense.dueDay
       if (expense.paymentMethod !== undefined) updates.payment_method = expense.paymentMethod
+      if (expense.isInstallment !== undefined) updates.is_installment = expense.isInstallment
+      if (expense.installmentNumber !== undefined) updates.installment_number = expense.installmentNumber
+      if (expense.totalInstallments !== undefined) updates.total_installments = expense.totalInstallments
+      if (expense.startDate !== undefined) updates.start_date = expense.startDate?.toISOString().split('T')[0]
+      if (expense.endDate !== undefined) updates.end_date = expense.endDate?.toISOString().split('T')[0]
       if (expense.isActive !== undefined) updates.is_active = expense.isActive
       if (expense.notes !== undefined) updates.notes = expense.notes
 
