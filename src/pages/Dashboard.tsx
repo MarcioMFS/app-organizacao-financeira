@@ -16,20 +16,6 @@ export default function Dashboard() {
   const currentMonth = new Date().getMonth()
   const currentYear = new Date().getFullYear()
 
-  // DEBUG: Mostrar todas as receitas fixas
-  console.log('=== DEBUG RECEITAS FIXAS ===')
-  console.log('Mês atual:', currentMonth, 'Ano atual:', currentYear)
-  console.log('Total de receitas fixas:', fixedIncomes.length)
-  fixedIncomes.forEach((fi, index) => {
-    console.log(`Receita ${index + 1}:`, {
-      nome: fi.name,
-      isActive: fi.isActive,
-      startDate: fi.startDate,
-      endDate: fi.endDate,
-      amount: fi.amount
-    })
-  })
-
   const monthlyData = useMemo(() => {
     const currentMonthTransactions = transactions.filter((t) => {
       const date = new Date(t.date)
@@ -43,42 +29,17 @@ export default function Dashboard() {
 
     // Adicionar receitas fixas ativas
     const activeFixedIncomes = fixedIncomes.filter(fi => {
-      console.log('Verificando receita:', fi.name)
-
-      if (!fi.isActive) {
-        console.log('  ❌ Não está ativa')
-        return false
-      }
-      console.log('  ✓ Está ativa')
-
+      if (!fi.isActive) return false
       const startDate = new Date(fi.startDate)
-      console.log('  Data início:', startDate, '- Mês:', startDate.getMonth(), 'Ano:', startDate.getFullYear())
-
       if (startDate.getFullYear() > currentYear ||
-          (startDate.getFullYear() === currentYear && startDate.getMonth() > currentMonth)) {
-        console.log('  ❌ Data de início é no futuro')
-        return false
-      }
-      console.log('  ✓ Data de início OK')
-
+          (startDate.getFullYear() === currentYear && startDate.getMonth() > currentMonth)) return false
       if (fi.endDate) {
         const endDate = new Date(fi.endDate)
-        console.log('  Data fim:', endDate, '- Mês:', endDate.getMonth(), 'Ano:', endDate.getFullYear())
         if (endDate.getFullYear() < currentYear ||
-            (endDate.getFullYear() === currentYear && endDate.getMonth() < currentMonth)) {
-          console.log('  ❌ Receita já terminou')
-          return false
-        }
-        console.log('  ✓ Data de fim OK')
-      } else {
-        console.log('  ✓ Receita indeterminada (sem data fim)')
+            (endDate.getFullYear() === currentYear && endDate.getMonth() < currentMonth)) return false
       }
-
-      console.log('  ✅ INCLUÍDA!')
       return true
     })
-    console.log('Total de receitas fixas ativas:', activeFixedIncomes.length)
-    console.log('Valor total receitas fixas:', activeFixedIncomes.reduce((sum, fi) => sum + fi.amount, 0))
     income += activeFixedIncomes.reduce((sum, fi) => sum + fi.amount, 0)
 
     // Despesas de transações

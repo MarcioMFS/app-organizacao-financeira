@@ -53,53 +53,16 @@ export default function Reports() {
     })
 
     // Receitas fixas ativas
-    console.log('=== DEBUG RECEITAS FIXAS - REPORTS ===')
-    console.log('Mês selecionado:', selectedMonth)
-    console.log('monthStart:', monthStart)
-    console.log('monthEnd:', monthEnd)
-    console.log('Total de receitas fixas:', fixedIncomes.length)
-
     const activeFixedIncomes = fixedIncomes.filter(fi => {
-      console.log('Verificando receita:', fi.name)
-
-      if (!fi.isActive) {
-        console.log('  ❌ Não está ativa (isActive=false)')
-        return false
-      }
-      console.log('  ✓ Está ativa')
-
+      if (!fi.isActive) return false
       const startDate = new Date(fi.startDate)
-      console.log('  startDate:', startDate, '- Timestamp:', startDate.getTime())
-      console.log('  monthEnd:', monthEnd, '- Timestamp:', monthEnd.getTime())
-      console.log('  startDate > monthEnd?', startDate > monthEnd)
-
-      if (startDate > monthEnd) {
-        console.log('  ❌ Receita ainda não começou (start > monthEnd)')
-        return false
-      }
-      console.log('  ✓ Receita já começou')
-
+      if (startDate > monthEnd) return false
       if (fi.endDate) {
         const endDate = new Date(fi.endDate)
-        console.log('  endDate:', endDate, '- Timestamp:', endDate.getTime())
-        console.log('  monthStart:', monthStart, '- Timestamp:', monthStart.getTime())
-        console.log('  endDate < monthStart?', endDate < monthStart)
-
-        if (endDate < monthStart) {
-          console.log('  ❌ Receita já terminou (end < monthStart)')
-          return false
-        }
-        console.log('  ✓ Receita ainda não terminou')
-      } else {
-        console.log('  ✓ Receita indeterminada (sem endDate)')
+        if (endDate < monthStart) return false
       }
-
-      console.log('  ✅ INCLUÍDA!')
       return true
     })
-
-    console.log('Receitas fixas ativas encontradas:', activeFixedIncomes.length)
-    activeFixedIncomes.forEach(fi => console.log('  -', fi.name, fi.amount))
 
     // Combinar tudo em um extrato único
     const allItems = [
