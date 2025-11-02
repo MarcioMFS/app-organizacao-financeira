@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDataStore } from '../store/dataStore'
+import { useFinancialStore } from '../store/financialStore'
 import { useAuthStore } from '../store/authStore'
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Plus } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
@@ -9,6 +10,7 @@ const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'
 
 export default function Dashboard() {
   const { transactions, categories } = useDataStore()
+  const { fixedExpenses, fixedIncomes } = useFinancialStore()
   const { couple } = useAuthStore()
 
   const currentMonth = new Date().getMonth()
@@ -20,13 +22,42 @@ export default function Dashboard() {
       return date.getMonth() === currentMonth && date.getFullYear() === currentYear
     })
 
-    const income = currentMonthTransactions
+    // Receitas de transações
+    let income = currentMonthTransactions
       .filter((t) => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0)
 
-    const expense = currentMonthTransactions
+    // Adicionar receitas fixas ativas
+    const activeFixedIncomes = fixedIncomes.filter(fi => {
+      if (!fi.isActive) return false
+      const startDate = new Date(fi.startDate)
+      if (startDate.getFullYear() > currentYear ||
+          (startDate.getFullYear() === currentYear && startDate.getMonth() > currentMonth)) return false
+      if (fi.endDate) {
+        const endDate = new Date(fi.endDate)
+        if (endDate.getFullYear() < currentYear ||
+            (endDate.getFullYear() === currentYear && endDate.getMonth() < currentMonth)) return false
+      }
+      return true
+    })
+    income += activeFixedIncomes.reduce((sum, fi) => sum + fi.amount, 0)
+
+    // Despesas de transações
+    let expense = currentMonthTransactions
       .filter((t) => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0)
+
+    // Adicionar gastos fixos ativos
+    const activeFixedExpenses = fixedExpenses.filter(fe => {
+      if (!fe.isActive) return false
+      if (fe.isInstallment && fe.endDate) {
+        const endDate = new Date(fe.endDate)
+        if (endDate.getFullYear() < currentYear ||
+            (endDate.getFullYear() === currentYear && endDate.getMonth() < currentMonth)) return false
+      }
+      return true
+    })
+    expense += activeFixedExpenses.reduce((sum, fe) => sum + fe.amount, 0)
 
     const personAIncome = currentMonthTransactions
       .filter((t) => t.type === 'income' && (t.owner === 'person_a' || t.owner === 'both'))
@@ -71,7 +102,7 @@ export default function Dashboard() {
       personAExpense,
       personBExpense,
     }
-  }, [transactions, currentMonth, currentYear])
+  }, [transactions, fixedExpenses, fixedIncomes, currentMonth, currentYear])
 
   const categoryExpenses = useMemo(() => {
     const currentMonthExpenses = transactions.filter((t) => {
