@@ -47,12 +47,17 @@ export default function FinancialGoals() {
       } else {
         await addFinancialGoal(goalData)
       }
+
       setShowModal(false)
       setEditingGoal(null)
-      e.currentTarget.reset()
-    } catch (error) {
+
+      setTimeout(() => {
+        alert(editingGoal ? 'Meta atualizada com sucesso!' : 'Meta criada com sucesso!')
+      }, 100)
+    } catch (error: any) {
       console.error('Error saving goal:', error)
-      alert('Erro ao salvar meta')
+      const errorMessage = error?.message || error?.error_description || JSON.stringify(error)
+      alert(`Erro ao salvar meta: ${errorMessage}`)
     }
   }
 
@@ -71,10 +76,16 @@ export default function FinancialGoals() {
         date: new Date(formData.get('date') as string),
         createdBy: user.id,
       })
+
       setShowDepositModal(null)
-      e.currentTarget.reset()
-    } catch (error) {
-      alert('Erro ao registrar movimentação')
+
+      setTimeout(() => {
+        alert('Movimentação registrada com sucesso!')
+      }, 100)
+    } catch (error: any) {
+      console.error('Error adding transaction:', error)
+      const errorMessage = error?.message || error?.error_description || JSON.stringify(error)
+      alert(`Erro ao registrar movimentação: ${errorMessage}`)
     }
   }
 

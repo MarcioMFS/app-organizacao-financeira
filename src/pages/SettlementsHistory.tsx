@@ -41,11 +41,16 @@ export default function SettlementsHistory() {
 
     try {
       await addDebtSettlement(settlementData)
+
       setShowModal(false)
-      e.currentTarget.reset()
-    } catch (error) {
+
+      setTimeout(() => {
+        alert('Quitação registrada com sucesso!')
+      }, 100)
+    } catch (error: any) {
       console.error('Error saving settlement:', error)
-      alert('Erro ao salvar quitação')
+      const errorMessage = error?.message || error?.error_description || JSON.stringify(error)
+      alert(`Erro ao salvar quitação: ${errorMessage}`)
     }
   }
 

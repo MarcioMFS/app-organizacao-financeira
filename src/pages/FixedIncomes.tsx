@@ -48,12 +48,17 @@ export default function FixedIncomes() {
       } else {
         await addFixedIncome(incomeData)
       }
+
       setShowModal(false)
       setEditingIncome(null)
-      e.currentTarget.reset()
-    } catch (error) {
+
+      setTimeout(() => {
+        alert(editingIncome ? 'Receita fixa atualizada com sucesso!' : 'Receita fixa criada com sucesso!')
+      }, 100)
+    } catch (error: any) {
       console.error('Error saving income:', error)
-      alert('Erro ao salvar receita fixa')
+      const errorMessage = error?.message || error?.error_description || JSON.stringify(error)
+      alert(`Erro ao salvar receita fixa: ${errorMessage}`)
     }
   }
 

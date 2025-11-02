@@ -52,14 +52,18 @@ export default function FixedExpenses() {
     try {
       if (editingExpense) {
         await updateFixedExpense(editingExpense.id, expenseData)
-        alert('Gasto fixo atualizado com sucesso!')
       } else {
         await addFixedExpense(expenseData)
-        alert('Gasto fixo criado com sucesso!')
       }
+
+      // Fechar modal e resetar estado antes de mostrar alerta
       setShowModal(false)
       setEditingExpense(null)
-      e.currentTarget.reset()
+
+      // Mostrar mensagem de sucesso depois de fechar
+      setTimeout(() => {
+        alert(editingExpense ? 'Gasto fixo atualizado com sucesso!' : 'Gasto fixo criado com sucesso!')
+      }, 100)
     } catch (error: any) {
       console.error('Error saving expense:', error)
       const errorMessage = error?.message || error?.error_description || JSON.stringify(error)
