@@ -59,21 +59,37 @@ export default function Dashboard() {
     })
     expense += activeFixedExpenses.reduce((sum, fe) => sum + fe.amount, 0)
 
-    const personAIncome = currentMonthTransactions
+    // Receitas por pessoa (transações + receitas fixas)
+    let personAIncome = currentMonthTransactions
       .filter((t) => t.type === 'income' && (t.owner === 'person_a' || t.owner === 'both'))
       .reduce((sum, t) => {
         if (t.owner === 'both') return sum + t.amount / 2
         return sum + t.amount
       }, 0)
 
-    const personBIncome = currentMonthTransactions
+    personAIncome += activeFixedIncomes
+      .filter(fi => fi.owner === 'person_a' || fi.owner === 'both')
+      .reduce((sum, fi) => {
+        if (fi.owner === 'both') return sum + fi.amount / 2
+        return sum + fi.amount
+      }, 0)
+
+    let personBIncome = currentMonthTransactions
       .filter((t) => t.type === 'income' && (t.owner === 'person_b' || t.owner === 'both'))
       .reduce((sum, t) => {
         if (t.owner === 'both') return sum + t.amount / 2
         return sum + t.amount
       }, 0)
 
-    const personAExpense = currentMonthTransactions
+    personBIncome += activeFixedIncomes
+      .filter(fi => fi.owner === 'person_b' || fi.owner === 'both')
+      .reduce((sum, fi) => {
+        if (fi.owner === 'both') return sum + fi.amount / 2
+        return sum + fi.amount
+      }, 0)
+
+    // Despesas por pessoa (transações + gastos fixos)
+    let personAExpense = currentMonthTransactions
       .filter((t) => t.type === 'expense' && (t.owner === 'person_a' || t.owner === 'both'))
       .reduce((sum, t) => {
         if (t.owner === 'both') return sum + t.amount / 2
@@ -81,12 +97,26 @@ export default function Dashboard() {
         return sum + t.amount
       }, 0)
 
-    const personBExpense = currentMonthTransactions
+    personAExpense += activeFixedExpenses
+      .filter(fe => fe.owner === 'person_a' || fe.owner === 'both')
+      .reduce((sum, fe) => {
+        if (fe.owner === 'both') return sum + fe.amount / 2
+        return sum + fe.amount
+      }, 0)
+
+    let personBExpense = currentMonthTransactions
       .filter((t) => t.type === 'expense' && (t.owner === 'person_b' || t.owner === 'both'))
       .reduce((sum, t) => {
         if (t.owner === 'both') return sum + t.amount / 2
         if (t.owner === 'proportional') return sum + (t.amount * (t.proportionB || 50)) / 100
         return sum + t.amount
+      }, 0)
+
+    personBExpense += activeFixedExpenses
+      .filter(fe => fe.owner === 'person_b' || fe.owner === 'both')
+      .reduce((sum, fe) => {
+        if (fe.owner === 'both') return sum + fe.amount / 2
+        return sum + fe.amount
       }, 0)
 
     const balance = income - expense
