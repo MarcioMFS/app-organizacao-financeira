@@ -13,6 +13,7 @@ export default function FixedExpenses() {
   const { categories } = useDataStore()
   const [showModal, setShowModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState<FixedExpense | null>(null)
+  const [isInstallment, setIsInstallment] = useState(false)
 
   useEffect(() => {
     if (couple?.id) {
@@ -45,8 +46,16 @@ export default function FixedExpenses() {
     if (isInstallment) {
       expenseData.installmentNumber = parseInt(formData.get('installmentNumber') as string) || 1
       expenseData.totalInstallments = parseInt(formData.get('totalInstallments') as string)
-      expenseData.startDate = new Date(formData.get('startDate') as string)
-      expenseData.endDate = new Date(formData.get('endDate') as string)
+
+      const startDateStr = formData.get('startDate') as string
+      const endDateStr = formData.get('endDate') as string
+
+      if (startDateStr) {
+        expenseData.startDate = new Date(startDateStr)
+      }
+      if (endDateStr) {
+        expenseData.endDate = new Date(endDateStr)
+      }
     }
 
     try {
@@ -74,6 +83,7 @@ export default function FixedExpenses() {
 
   const handleEdit = (expense: FixedExpense) => {
     setEditingExpense(expense)
+    setIsInstallment(expense.isInstallment || false)
     setShowModal(true)
   }
 
@@ -115,6 +125,7 @@ export default function FixedExpenses() {
         <button
           onClick={() => {
             setEditingExpense(null)
+            setIsInstallment(false)
             setShowModal(true)
           }}
           className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -356,7 +367,8 @@ export default function FixedExpenses() {
                     <input
                       type="checkbox"
                       name="isInstallment"
-                      defaultChecked={editingExpense?.isInstallment}
+                      checked={isInstallment}
+                      onChange={(e) => setIsInstallment(e.target.checked)}
                       className="rounded"
                       id="isInstallment"
                     />
@@ -366,7 +378,8 @@ export default function FixedExpenses() {
                   </label>
                 </div>
 
-                <div id="installmentFields" className="space-y-4 hidden">
+                {isInstallment && (
+                <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -421,6 +434,7 @@ export default function FixedExpenses() {
                     </div>
                   </div>
                 </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -457,21 +471,6 @@ export default function FixedExpenses() {
           </div>
         </div>
       )}
-
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            document.getElementById('isInstallment')?.addEventListener('change', function(e) {
-              const fields = document.getElementById('installmentFields');
-              if (e.target.checked) {
-                fields.classList.remove('hidden');
-              } else {
-                fields.classList.add('hidden');
-              }
-            });
-          `
-        }}
-      />
     </div>
   )
 }
