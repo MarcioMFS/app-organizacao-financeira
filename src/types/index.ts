@@ -121,3 +121,128 @@ export interface MonthComparison {
   expenseChange: number
   savingsChange: number
 }
+
+// Fixed Expenses & Installments
+export interface FixedExpense {
+  id: string
+  coupleId: string
+  name: string
+  description?: string
+  amount: number
+  categoryId: string
+  owner: TransactionOwner
+  proportionA?: number
+  proportionB?: number
+  dueDay: number
+  paymentMethod?: PaymentMethod
+  isInstallment: boolean
+  installmentNumber?: number // Current installment (e.g., 3)
+  totalInstallments?: number // Total installments (e.g., 12)
+  startDate?: Date
+  endDate?: Date
+  isActive: boolean
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
+  createdBy: string
+}
+
+export interface FixedExpensePayment {
+  id: string
+  fixedExpenseId: string
+  referenceMonth: Date // Month reference (e.g., 2025-01-01)
+  paidDate?: Date
+  paidAmount?: number
+  paymentMethod?: PaymentMethod
+  notes?: string
+  createdAt: Date
+  paidBy?: string
+}
+
+// Fixed Incomes
+export interface FixedIncome {
+  id: string
+  coupleId: string
+  name: string
+  description?: string
+  amount: number
+  categoryId: string
+  owner: 'person_a' | 'person_b' | 'both'
+  receiptDay: number
+  isIndefinite: boolean
+  startDate: Date
+  endDate?: Date
+  isActive: boolean
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
+  createdBy: string
+}
+
+export interface FixedIncomeReceipt {
+  id: string
+  fixedIncomeId: string
+  referenceMonth: Date
+  receivedDate?: Date
+  receivedAmount?: number
+  notes?: string
+  createdAt: Date
+  receivedBy?: string
+}
+
+// Financial Goals
+export type TimeFrame = 'short' | 'medium' | 'long'
+export type Priority = 'low' | 'medium' | 'high'
+
+export interface FinancialGoal {
+  id: string
+  coupleId: string
+  name: string
+  description?: string
+  targetAmount: number
+  currentAmount: number
+  timeFrame: TimeFrame
+  startDate: Date
+  targetDate?: Date
+  priority: Priority
+  category?: string
+  icon: string
+  imageUrl?: string
+  isCompleted: boolean
+  completedDate?: Date
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+  createdBy: string
+}
+
+export interface FinancialGoalTransaction {
+  id: string
+  goalId: string
+  amount: number
+  type: 'deposit' | 'withdrawal'
+  description: string
+  date: Date
+  createdBy: string
+  createdAt: Date
+}
+
+// Debt Settlements
+export type ReferenceType = 'fixed_expense' | 'installment' | 'transaction' | 'other'
+
+export interface DebtSettlement {
+  id: string
+  coupleId: string
+  referenceType: ReferenceType
+  referenceId?: string
+  name: string
+  description?: string
+  originalAmount: number
+  settledAmount: number
+  owner: 'person_a' | 'person_b' | 'both'
+  settlementDate: Date
+  originalDueDate?: Date
+  notes?: string
+  createdAt: Date
+  createdBy: string
+}

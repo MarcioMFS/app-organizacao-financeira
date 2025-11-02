@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 import { useDataStore } from './store/dataStore'
+import { useFinancialStore } from './store/financialStore'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -10,10 +11,15 @@ import Categories from './pages/Categories'
 import Reserves from './pages/Reserves'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import FixedExpenses from './pages/FixedExpenses'
+import FixedIncomes from './pages/FixedIncomes'
+import FinancialGoals from './pages/FinancialGoals'
+import SettlementsHistory from './pages/SettlementsHistory'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, couple } = useAuthStore()
   const { fetchTransactions, fetchCategories, fetchReserves } = useDataStore()
+  const { fetchFixedExpenses, fetchFixedIncomes, fetchFinancialGoals, fetchDebtSettlements } = useFinancialStore()
 
   // Carregar dados quando o usuário está autenticado
   useEffect(() => {
@@ -21,8 +27,12 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
       fetchTransactions(couple.id)
       fetchCategories(couple.id)
       fetchReserves(couple.id)
+      fetchFixedExpenses(couple.id)
+      fetchFixedIncomes(couple.id)
+      fetchFinancialGoals(couple.id)
+      fetchDebtSettlements(couple.id)
     }
-  }, [user, couple?.id, fetchTransactions, fetchCategories, fetchReserves])
+  }, [user, couple?.id, fetchTransactions, fetchCategories, fetchReserves, fetchFixedExpenses, fetchFixedIncomes, fetchFinancialGoals, fetchDebtSettlements])
 
   return user ? <Layout>{children}</Layout> : <Navigate to="/login" />
 }
@@ -77,6 +87,22 @@ function App() {
 
         <Route path="/settings" element={
           <PrivateRoute><Settings /></PrivateRoute>
+        } />
+
+        <Route path="/fixed-expenses" element={
+          <PrivateRoute><FixedExpenses /></PrivateRoute>
+        } />
+
+        <Route path="/fixed-incomes" element={
+          <PrivateRoute><FixedIncomes /></PrivateRoute>
+        } />
+
+        <Route path="/financial-goals" element={
+          <PrivateRoute><FinancialGoals /></PrivateRoute>
+        } />
+
+        <Route path="/settlements" element={
+          <PrivateRoute><SettlementsHistory /></PrivateRoute>
         } />
 
         <Route path="/" element={<Navigate to="/dashboard" />} />

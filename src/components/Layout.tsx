@@ -9,7 +9,11 @@ import {
   Settings,
   LogOut,
   Sun,
-  Moon
+  Moon,
+  CreditCard,
+  TrendingUp,
+  Target,
+  CheckCircle
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { useSettingsStore } from '../store/settingsStore'
@@ -26,6 +30,10 @@ export default function Layout({ children }: LayoutProps) {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Lançamentos', href: '/transactions', icon: Receipt },
+    { name: 'Gastos Fixos', href: '/fixed-expenses', icon: CreditCard },
+    { name: 'Receitas Fixas', href: '/fixed-incomes', icon: TrendingUp },
+    { name: 'Metas', href: '/financial-goals', icon: Target },
+    { name: 'Quitações', href: '/settlements', icon: CheckCircle },
     { name: 'Categorias', href: '/categories', icon: Tags },
     { name: 'Reservas', href: '/reserves', icon: PiggyBank },
     { name: 'Relatórios', href: '/reports', icon: FileText },
